@@ -2,10 +2,12 @@ const path = require('path');
 const express = require('express');
 const handlebars = require('express-handlebars');
 const morgan = require('morgan');
-
+const route = require('./routes')
+const db = require('./config/db')
 const app = express();
 const port = 3000;
-
+//connet db
+db.connect();
 app.use(express.static(path.join(__dirname, 'public')))
 
 // http logger
@@ -18,14 +20,9 @@ app.engine('hbs', handlebars.engine({
 app.set('view engine', 'hbs');
 app.set('views', path.join(__dirname, 'resoucces/views'));
 
-app.get('/', (req, res) => {
-    res.render('home');
-});
-app.get('/news', (req, res) => {
-    res.render('news');
-});
-app.get('/search', (req, res) => {
-    res.render('search');
-});
+
+
+//Routes init
+route(app)
 
 app.listen(port, () => console.log(`hello http://localhost:${port}`));
