@@ -13,16 +13,48 @@ class CoursesController {
     create(req, res, next) {
         res.render('courses/create')
     }
-    // [Post] /courses/store
-    store(req, res, next) {
-        // const formData = req.body
-        // req.body.image = `https://img.youtube.com/vi/${req.body.videoId}/sddefault.jpg`
-        // const course = new Course(formData)
-        // course.save()
-        // res.send(' hello')
-        res.json(req.body)
 
+    store(req, res, next) {
+        const formData = req.body;
+
+        // Generate the image URL based on the provided videoId
+        formData.image = `https://img.youtube.com/vi/${formData.videoId}/sddefault.jpg`;
+
+        // Create a new Course instance using the formData
+        const course = new Course(formData);
+
+        // Save the course data to the database
+        course.save()
+            .then(() => res.redirect('/'))
+            .catch(error => {
+                // Handle any errors that occur during the saving process
+                console.error("Error saving course:", error);
+                // You might want to redirect to an error page or handle the error differently
+                res.status(500).send("An error occurred while saving the course.");
+            });
     }
+    //[GET] /courses/:id/edit
+    edit(req, res, next) {
+        Course.findById(req.params.id)
+            .then(course => {
+                res.render('courses/edit', { course: mongooseToObject(course) });
+            })
+            .catch(next);
+    }
+    // // [PUT] courses/:id
+    // update(req, res, next) {
+    //     Course.updateOne({ _id: req.params._id }, req.body)
+    //         .then(() => res.redirect('/me/stored/courses'))
+    //         .cath(next)
+    // }
+    // [PUT] courses/:id
+    update(req, res, next) {
+        Course.updateOne({ _id: req.params.id }, req.body)
+            .then(() => res.redirect('/me/stored/courses'))
+            .catch(next);
+    }
+
+
 }
 
 module.exports = new CoursesController();
