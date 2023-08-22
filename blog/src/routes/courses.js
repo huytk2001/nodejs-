@@ -10,6 +10,7 @@ route.get('/create', coursesController.create)
 route.post('/store', coursesController.store)
 route.get('/:slug', coursesController.show)
 route.put('/:id', coursesController.update)
+route.delete('/:id', coursesController.destroy)
 route.get('/:id/edit', coursesController.edit)
 
 module.exports = route
