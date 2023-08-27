@@ -16,22 +16,14 @@ class CoursesController {
 
     store(req, res, next) {
         const formData = req.body;
-
         // Generate the image URL based on the provided videoId
         formData.image = `https://img.youtube.com/vi/${formData.videoId}/sddefault.jpg`;
-
         // Create a new Course instance using the formData
         const course = new Course(formData);
-
         // Save the course data to the database
         course.save()
-            .then(() => res.redirect('/'))
-            .catch(error => {
-                // Handle any errors that occur during the saving process
-                console.error("Error saving course:", error);
-                // You might want to redirect to an error page or handle the error differently
-                res.status(500).send("An error occurred while saving the course.");
-            });
+            .then(() => res.redirect('/me/stored/courses'))
+            .catch(next);
     }
     //[GET] /courses/:id/edit
     edit(req, res, next) {
@@ -41,12 +33,7 @@ class CoursesController {
             })
             .catch(next);
     }
-    // // [PUT] courses/:id
-    // update(req, res, next) {
-    //     Course.updateOne({ _id: req.params._id }, req.body)
-    //         .then(() => res.redirect('/me/stored/courses'))
-    //         .cath(next)
-    // }
+
     // [PUT] courses/:id
     update(req, res, next) {
         Course.updateOne({ _id: req.params.id }, req.body)
@@ -55,11 +42,24 @@ class CoursesController {
     }
     // [DELETE] courses/:id
     destroy(req, res, next) {
-        Course.deleteOne({ _id: req.params.id })
+        Course.delete({ _id: req.params.id })
             .then(() => res.redirect('back'))
             .catch(next)
 
     }
+    //[DELETE] courses/:id/force
+    forceDestroy(req, res, next) {
+        Course.deleteOne({ _id: req.params._id })
+            .then(() => res.redirect('back'))
+            .catch(next)
+    }
+    // [Patch] courses/:id/restore
+    restore(req, res, next) {
+        Course.restore({ _id: req.params.id })
+            .then(() => res.redirect('back'))
+            .catch(error => next(error)); // Sử dụng 'error' thay vì 'next'
+    }
+
 
 }
 

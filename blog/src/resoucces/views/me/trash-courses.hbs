@@ -1,29 +1,13 @@
-<div class="mt-4 centered-content">
+<div class="mt-4">
     <div>
-        <h3>Khóa học của tôi</h3>
-        {{!-- {{#if deletedCount}} --}}
-        <a href="/me/trash/courses">Thùng rác ({{deletedCount}})</a>
-        {{!-- {{/if}} --}}
+        <h3>Khóa học đã xóa</h3>
+        <a href="/me/stored/courses">Danh sách khóa học</a>
     </div>
-    <div class="mt-4 d-flex align-items-center">
-        <div class="form-check">
-            <input class="form-check-input" type="checkbox" id="exampleCheck1" value="">
-            <label class="form-check-label" for="exampleCheck1">
-                Chọn tất cả
-            </label>
-        </div>
-        <select class="form-control form-control-sm checkbox-select-all-options" id="exampleFormControlSelect2">
-            <option>-- Chọn hành động --</option>
-            <option value="delete">Xóa</option>
 
-        </select>
-        <button class="btn btn-primary btn-sm">Thực hiện</button>
-
-    </div>
     <table class="table mt-4">
         <thead>
             <tr>
-                <th scope="col" colspan="2">#</th>
+                <th scope="col">#</th>
                 <th scope="col">Tên khóa học</th>
                 <th scope="col">Trình độ</th>
                 <th scope="col" colspan="2">Thời gian tạo</th>
@@ -32,26 +16,21 @@
         <tbody>
             {{#each courses}}
             <tr>
-                <td>
-                    <div class="from-check">
-                        <input class="form-check-input" type="checkbox" value="{{this._id}} " name="courseIds[]">
-                    </div>
-                </td>
                 <th scope="row">{{sum @index 1}}</th>
                 <td>{{this.name}}</td>
                 <td>{{this.level}}</td>
                 <td>{{this.createdAt}}</td>
                 <td>
-                    <a href="/courses/{{this._id}}/edit" class="btn btn-link">Sữa</button>
+                    <a href="" class="btn btn-link btn-restore" data-id="{{this._id}}">Khôi phục</button>
                         <a href="" class="btn btn-link" data-toggle="modal" data-target="#delete-course-modal"
-                            data-id="{{this._id}}">Xóa</button>
+                            data-id="{{this._id}}">Xóa vĩnh viễn</button>
                 </td>
             </tr>
             {{else}}
             <tr>
                 <td colspan="5" class="text-center">
-                    Bạn chưa đăng ký khóa học nào
-                    <a href="/courses/create">Đăng khóa học</a>
+                    Thùng rác trống.
+                    <a href="/courses/create">Danh sách đăng ký khóa học.</a>
                 </td>
             </tr>
             {{/each}}
@@ -81,25 +60,34 @@
 </div>
 {{!-- Delete form --}}
 <form name="delete-courses-form" method="post"></form>
+{{!-- Restore form --}}
+<form name="restore-courses-form" method="post"></form>
 <script>
     document.addEventListener('DOMContentLoaded', function () {
         var courseId
         var deleteForm = document.forms['delete-courses-form']
+        var restoreForm = document.forms['restore-courses-form']
         var btnDeleteCourse = document.getElementById('btn-delete-course')
-        var checkboxAll = $('#checkbox-all')
-        var courseItemCheckBox = $('input[name=courseIds[]]')
+        var restoreBtn = $('.btn-restore')
         //when dialog confirm clicked
         $('#delete-course-modal').on('show.bs.modal', function (event) {
-            var button = $(event.relatedTarget) // Button that triggered the modal
+            let button = $(event.relatedTarget) // Button that triggered the modal
             courseId = button.data('id') // Extract info from data-* attributes
 
 
         })
 
         btnDeleteCourse.onclick = function () {
-            deleteForm.action = '/courses/' + courseId + '?_method=DELETE'
+            deleteForm.action = '/courses/' + courseId + '/force?_method=DELETE'
             deleteForm.submit()
         }
+        //Restore Click
+        restoreBtn.click(function (e) {
+            e.preventDefault();
+            var courseId = $(this).data('id')
+            restoreForm.action = '/courses/' + courseId + '/restore?_method=PATCH'
+            restoreForm.submit()
+        })
     })
 
 </script>

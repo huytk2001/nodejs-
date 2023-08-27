@@ -3,3 +3,7 @@ h1 {
 
 h2 {
   color: aqua; }
+
+.checkbox-select-all-options {
+  width: 170px;
+  margin: 0 16px; }
