@@ -60,7 +60,17 @@ class CoursesController {
             .catch(error => next(error)); // Sử dụng 'error' thay vì 'next'
     }
 
-
+    handleFromActive(req, res, next) { // Đã sửa tên hàm thành handleFormActive
+        switch (req.body.action) { // Đã sửa rep thành req
+            case 'delete':
+                Course.deleteMany({ _id: { $in: req.body.CourseIds } }) // Sử dụng Courses.deleteMany thay vì Courses.delete
+                    .then(() => res.redirect('back'))
+                    .catch(next);
+                break;
+            default:
+                res.json({ message: 'Action is invalid' }); // Sửa lỗi jôn thành json
+        }
+    }
 }
 
 module.exports = new CoursesController();
