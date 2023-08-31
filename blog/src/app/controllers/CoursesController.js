@@ -49,7 +49,7 @@ class CoursesController {
     }
     //[DELETE] courses/:id/force
     forceDestroy(req, res, next) {
-        Course.deleteOne({ _id: req.params._id })
+        Course.deleteOne({ _id: req.params.id })
             .then(() => res.redirect('back'))
             .catch(next)
     }
@@ -59,11 +59,11 @@ class CoursesController {
             .then(() => res.redirect('back'))
             .catch(error => next(error)); // Sử dụng 'error' thay vì 'next'
     }
-
+    //[post] courses/handleFromActive
     handleFromActive(req, res, next) { // Đã sửa tên hàm thành handleFormActive
         switch (req.body.action) { // Đã sửa rep thành req
             case 'delete':
-                Course.deleteMany({ _id: { $in: req.body.CourseIds } }) // Sử dụng Courses.deleteMany thay vì Courses.delete
+                Course.deleteMany({ _id: { $in: req.body.courseIds } }) // Sử dụng Course.deleteMany thay vì Course.delete
                     .then(() => res.redirect('back'))
                     .catch(next);
                 break;
@@ -71,6 +71,9 @@ class CoursesController {
                 res.json({ message: 'Action is invalid' }); // Sửa lỗi jôn thành json
         }
     }
+
+
+
 }
 
 module.exports = new CoursesController();
